@@ -22,16 +22,16 @@ if (Test-Path "$root\nvdaControllerClient.dll") {
     Copy-Item "$root\nvdaControllerClient.dll" $stage
 }
 
-# support folders shipped with official MAME releases (plus cheat, a common
-# add-on) - deliberately NOT roms, ini, cfg, nvram or sta, so personal ROMs,
-# configuration and play state never ship in a package
-foreach ($dir in @("artwork", "bgfx", "cheat", "ctrlr", "hash", "hlsl", "language", "plugins", "samples")) {
+# support folders shipped with official MAME releases (plus cheat and roms) -
+# deliberately NOT ini, cfg, nvram or sta, so personal configuration and play
+# state never ship in a package
+foreach ($dir in @("artwork", "bgfx", "cheat", "ctrlr", "hash", "hlsl", "language", "plugins", "roms", "samples")) {
     if (Test-Path "$root\$dir") {
         Copy-Item "$root\$dir" $stage -Recurse
     }
 }
 
-# empty roms folder as the obvious place for the recipient's own ROMs
+# make sure a roms folder exists in the package even if the source has none
 New-Item -ItemType Directory -Force "$stage\roms" | Out-Null
 
 # cheat collection archive (e.g. Pugsy's cheats), if present - MAME looks
