@@ -29,10 +29,12 @@ foreach ($dir in @("artwork", "bgfx", "cheat", "ctrlr", "hash", "hlsl", "ini", "
     }
 }
 
-# cheat collection archive (e.g. Pugsy's cheats), if present
-foreach ($cheatfile in @("cheat.7z", "cheats.7z")) {
+# cheat collection archive (e.g. Pugsy's cheats), if present - MAME looks
+# for it inside the cheat folder (the default cheatpath), not the root
+foreach ($cheatfile in @("cheat.7z", "cheats.7z", "cheat\cheat.7z", "cheat\cheats.7z")) {
     if (Test-Path "$root\$cheatfile") {
-        Copy-Item "$root\$cheatfile" $stage
+        New-Item -ItemType Directory -Force "$stage\cheat" | Out-Null
+        Copy-Item "$root\$cheatfile" "$stage\cheat\"
     }
 }
 
