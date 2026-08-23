@@ -200,6 +200,7 @@ protected:
 	int         m_total_lines;
 	int         m_topline_datsview;
 	int         m_filter_highlight;
+	bool        m_filter_announce_pending;
 	std::string m_search;
 
 private:

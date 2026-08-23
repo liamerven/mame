@@ -1076,6 +1076,7 @@ void menu_select_game::filter_selected(int index)
 					}
 				}
 				m_persistent_data.filter_data().set_current_filter_type(new_type);
+				m_filter_announce_pending = true;
 				reset(reset_options::REMEMBER_REF);
 			});
 }

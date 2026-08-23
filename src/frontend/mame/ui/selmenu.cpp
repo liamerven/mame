@@ -512,6 +512,7 @@ menu_select_launch::menu_select_launch(mame_ui_manager &mui, render_target &targ
 	, m_total_lines(0)
 	, m_topline_datsview(0)
 	, m_filter_highlight(0)
+	, m_filter_announce_pending(false)
 	, m_ui_error(false)
 	, m_info_driver(nullptr)
 	, m_info_software(nullptr)
@@ -1056,6 +1057,13 @@ std::string menu_select_launch::speech_phrase()
 	// an error message takes over the display until dismissed - read it out
 	if (m_ui_error)
 		return m_error_text;
+
+	// acknowledge a just-applied filter with the resulting item count
+	if (m_filter_announce_pending)
+	{
+		m_filter_announce_pending = false;
+		set_speech_prefix(string_format(_("Filter applied, %1$d items shown. "), m_available_items));
+	}
 
 	switch (get_focus())
 	{

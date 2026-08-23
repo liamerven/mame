@@ -373,6 +373,10 @@ protected:
 	// menus with multiple focus areas or additional state worth announcing
 	virtual std::string speech_phrase();
 
+	// queue a one-shot announcement spoken before the next selection phrase
+	// without affecting change detection (text should end with ". ")
+	void set_speech_prefix(std::string &&text) { m_speech_prefix = std::move(text); }
+
 	static bool is_selectable(menu_item const &item)
 	{
 		return (!(item.flags() & menu::FLAG_DISABLE) && (item.type() != menu_item_type::SEPARATOR));
@@ -558,6 +562,7 @@ private:
 	std::unique_ptr<menu>   m_parent;               // pointer to parent menu in the stack
 
 	std::optional<std::string> m_heading;           // menu heading
+	std::string             m_speech_prefix;        // pending one-shot spoken announcement
 	std::vector<menu_item>  m_items;                // array of items
 	bool                    m_rebuilding;           // ensure items are only added during rebuild
 

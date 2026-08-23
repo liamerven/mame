@@ -769,6 +769,7 @@ void menu_select_software::filter_selected(int index)
 					}
 				}
 				m_data->set_filter_type(new_type);
+				m_filter_announce_pending = true;
 				reset(reset_options::REMEMBER_REF);
 			});
 }

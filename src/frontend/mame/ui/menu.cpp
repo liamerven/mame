@@ -1985,14 +1985,19 @@ void menu::announce_selection()
 	// compose what the current selection should sound like
 	std::string phrase = speech_phrase();
 
+	// a queued one-shot announcement forces speech even if the phrase is
+	// unchanged, but doesn't take part in change detection itself
+	std::string prefix = std::move(m_speech_prefix);
+	m_speech_prefix.clear();
+
 	// only speak when the menu or the selection actually changed
 	bool const menu_changed = m_global_state.speech_menu() != this;
-	if (menu_changed || (m_global_state.speech_text() != phrase))
+	if (menu_changed || !prefix.empty() || (m_global_state.speech_text() != phrase))
 	{
-		std::string announcement;
+		std::string announcement = std::move(prefix);
 		if (menu_changed && m_heading && !m_heading->empty())
 		{
-			announcement = *m_heading;
+			announcement.append(*m_heading);
 			announcement.append(". ");
 		}
 		announcement.append(phrase);
