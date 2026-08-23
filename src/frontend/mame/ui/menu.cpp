@@ -1990,18 +1990,20 @@ void menu::announce_selection()
 	std::string prefix = std::move(m_speech_prefix);
 	m_speech_prefix.clear();
 
-	// only speak when the menu or the selection actually changed
+	// only speak when the menu, its heading or the selection actually changed
+	std::string heading(m_heading ? *m_heading : std::string());
 	bool const menu_changed = m_global_state.speech_menu() != this;
-	if (menu_changed || !prefix.empty() || (m_global_state.speech_text() != phrase))
+	bool const heading_changed = menu_changed || (m_global_state.speech_heading() != heading);
+	if (menu_changed || heading_changed || !prefix.empty() || (m_global_state.speech_text() != phrase))
 	{
 		std::string announcement = std::move(prefix);
-		if (menu_changed && m_heading && !m_heading->empty())
+		if (heading_changed && !heading.empty())
 		{
-			announcement.append(*m_heading);
+			announcement.append(heading);
 			announcement.append(". ");
 		}
 		announcement.append(phrase);
-		m_global_state.set_speech_state(this, std::move(phrase));
+		m_global_state.set_speech_state(this, std::move(phrase), std::move(heading));
 		if (!announcement.empty())
 			speech::speak(announcement, true);
 	}

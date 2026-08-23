@@ -503,6 +503,19 @@ void menu_load_save_state_base::custom_render(uint32_t flags, void *selectedref,
 
 
 //-------------------------------------------------
+//  speech_phrase
+//-------------------------------------------------
+
+std::string menu_load_save_state_base::speech_phrase()
+{
+	// the delete confirmation prompt takes over the display - read it out
+	if (!m_confirm_prompt.empty())
+		return m_confirm_prompt;
+	return menu::speech_phrase();
+}
+
+
+//-------------------------------------------------
 //  itemref_from_file_entry
 //-------------------------------------------------
 

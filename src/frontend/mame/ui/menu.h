@@ -455,8 +455,14 @@ private:
 		// tracking for spoken menu announcements
 		void const *speech_menu() const { return m_speech_menu; }
 		std::string const &speech_text() const { return m_speech_text; }
-		void set_speech_state(void const *menu, std::string &&text) { m_speech_menu = menu; m_speech_text = std::move(text); }
-		void reset_speech_state() { m_speech_menu = nullptr; m_speech_text.clear(); }
+		std::string const &speech_heading() const { return m_speech_heading; }
+		void set_speech_state(void const *menu, std::string &&text, std::string &&heading)
+		{
+			m_speech_menu = menu;
+			m_speech_text = std::move(text);
+			m_speech_heading = std::move(heading);
+		}
+		void reset_speech_state() { m_speech_menu = nullptr; m_speech_text.clear(); m_speech_heading.clear(); }
 
 		void set_target(render_target &target)
 		{
@@ -497,6 +503,7 @@ private:
 
 		void const                      *m_speech_menu;         // menu most recently announced via speech
 		std::string                     m_speech_text;          // most recent spoken selection text
+		std::string                     m_speech_heading;       // most recent spoken menu heading
 
 		render_target                   *m_target;
 		s32                             m_current_pointer;      // current active pointer ID or -1 if none
