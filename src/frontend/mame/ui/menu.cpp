@@ -1954,12 +1954,40 @@ void menu::activate_menu(render_target &target)
 std::string menu::speech_phrase()
 {
 	std::string phrase;
+
+	// menus with nothing to interact with often carry their real content in
+	// disabled informational items (e.g. "No category INI files found",
+	// "[no matches]") - read those out when there's at most one selectable
+	// item, since they can never gain selection themselves
+	int selectable = 0;
+	for (menu_item const &item : m_items)
+	{
+		if (is_selectable(item))
+			++selectable;
+	}
+	if (1 >= selectable)
+	{
+		for (menu_item const &item : m_items)
+		{
+			if ((item.flags() & FLAG_DISABLE) && (item.type() != menu_item_type::SEPARATOR) && (item.text() != MENU_SEPARATOR_ITEM))
+			{
+				phrase.append(item.text());
+				if (!item.subtext().empty())
+				{
+					phrase.append(": ");
+					phrase.append(item.subtext());
+				}
+				phrase.append(". ");
+			}
+		}
+	}
+
 	if (selection_valid() && !m_items.empty())
 	{
 		menu_item const &item = m_items[m_selected];
 		if ((item.type() != menu_item_type::SEPARATOR) && (item.text() != MENU_SEPARATOR_ITEM))
 		{
-			phrase = item.text();
+			phrase.append(item.text());
 			if (!item.subtext().empty())
 			{
 				phrase.append(": ");
