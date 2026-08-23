@@ -1076,7 +1076,13 @@ void menu_select_game::filter_selected(int index)
 					}
 				}
 				m_persistent_data.filter_data().set_current_filter_type(new_type);
-				m_filter_announce_pending = true;
+
+				// the category and custom editors apply on any exit including
+				// Escape, so state their result rather than claiming a change
+				if ((machine_filter::CATEGORY == new_type) || (machine_filter::CUSTOM == new_type))
+					m_filter_announce_text = string_format(_("%1$s filter active"), machine_filter::display_name(new_type));
+				else
+					m_filter_announce_text = _("Filter applied");
 				reset(reset_options::REMEMBER_REF);
 			});
 }

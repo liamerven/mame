@@ -769,7 +769,13 @@ void menu_select_software::filter_selected(int index)
 					}
 				}
 				m_data->set_filter_type(new_type);
-				m_filter_announce_pending = true;
+
+				// the custom editor applies on any exit including Escape, so
+				// state its result rather than claiming a change
+				if (software_filter::CUSTOM == new_type)
+					m_filter_announce_text = string_format(_("%1$s filter active"), software_filter::display_name(new_type));
+				else
+					m_filter_announce_text = _("Filter applied");
 				reset(reset_options::REMEMBER_REF);
 			});
 }

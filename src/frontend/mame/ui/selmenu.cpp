@@ -512,7 +512,7 @@ menu_select_launch::menu_select_launch(mame_ui_manager &mui, render_target &targ
 	, m_total_lines(0)
 	, m_topline_datsview(0)
 	, m_filter_highlight(0)
-	, m_filter_announce_pending(false)
+	, m_filter_announce_text()
 	, m_ui_error(false)
 	, m_info_driver(nullptr)
 	, m_info_software(nullptr)
@@ -1068,11 +1068,11 @@ std::string menu_select_launch::speech_phrase()
 	std::string prefix;
 
 	// acknowledge a just-applied filter
-	if (m_filter_announce_pending)
+	if (!m_filter_announce_text.empty())
 	{
-		m_filter_announce_pending = false;
-		prefix.append(_("Filter applied"));
+		prefix.append(m_filter_announce_text);
 		prefix.append(". ");
+		m_filter_announce_text.clear();
 	}
 
 	std::string phrase;
