@@ -306,6 +306,7 @@ private:
 	virtual void draw_left_panel(u32 flags) = 0;
 
 	// draw infos
+	bool update_info_buffer(std::string_view &first, int &total);
 	void infos_render(u32 flags);
 	void general_info(ui_system_info const *system, game_driver const &driver, std::string &buffer);
 

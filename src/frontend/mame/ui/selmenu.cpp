@@ -1077,10 +1077,17 @@ std::string menu_select_launch::speech_phrase()
 	case focused_menu::RIGHTBOTTOM:
 		{
 			std::string phrase(_("Information panel"));
-			if (!m_info_buffer.empty())
+			std::string_view first;
+			int total;
+			if (update_info_buffer(first, total))
 			{
-				phrase.append(". ");
-				phrase.append(m_info_buffer);
+				phrase.append(": ");
+				phrase.append(m_info_view ? std::string_view(m_items_list[m_info_view - 1]) : first);
+				if (!m_info_buffer.empty())
+				{
+					phrase.append(". ");
+					phrase.append(m_info_buffer);
+				}
 			}
 			return phrase;
 		}
@@ -4056,15 +4063,16 @@ bool menu_select_launch::has_multiple_bios(game_driver const &driver, s_bios &bi
 
 
 //-------------------------------------------------
-//  draw infos
+//  update the info text buffer for the current
+//  selection and view - used by both drawing and
+//  speech so the text is fresh even if the info
+//  tab isn't being displayed
 //-------------------------------------------------
 
-void menu_select_launch::infos_render(u32 flags)
+bool menu_select_launch::update_info_buffer(std::string_view &first, int &total)
 {
-	std::string_view first;
 	ui_software_info const *software;
 	ui_system_info const *system;
-	int total;
 	get_selection(software, system);
 
 	if (software && !software->startempty)
@@ -4142,8 +4150,22 @@ void menu_select_launch::infos_render(u32 flags)
 	}
 	else
 	{
-		return;
+		return false;
 	}
+	return true;
+}
+
+
+//-------------------------------------------------
+//  draw infos
+//-------------------------------------------------
+
+void menu_select_launch::infos_render(u32 flags)
+{
+	std::string_view first;
+	int total;
+	if (!update_info_buffer(first, total))
+		return;
 
 	// draw the heading
 	std::string_view const snaptext(m_info_view ? std::string_view(m_items_list[m_info_view - 1]) : first);
