@@ -273,6 +273,7 @@ menu_input::menu_input(mame_ui_manager &mui, render_target &target)
 	, lastitem(nullptr)
 	, record_next(false)
 	, speech_pressed(false)
+	, speech_pressed_ref(nullptr)
 	, modified_ticks(0)
 {
 	set_process_flags(PROCESS_LR_ALWAYS);
@@ -383,9 +384,21 @@ void menu_input::custom_render(uint32_t flags, void *selectedref, float top, flo
 		else if (selectedref)
 		{
 			const input_item_data &item = *reinterpret_cast<input_item_data *>(selectedref);
-			if ((INPUT_TYPE_ANALOG != item.type) && machine().input().seq_pressed(item.seq))
+			bool const pressed = (INPUT_TYPE_ANALOG != item.type) && machine().input().seq_pressed(item.seq);
+
+			// when the selection moves to a new row, take the current state as
+			// the baseline so a key still held from navigating (e.g. the down
+			// arrow landing on P1 Down) doesn't talk over the row announcement
+			if (selectedref != speech_pressed_ref)
 			{
-				// speak the indicator once per press so assignments can be tested by ear
+				speech_pressed_ref = selectedref;
+				speech_pressed = pressed;
+			}
+
+			if (pressed)
+			{
+				// speak the indicator once per fresh press so assignments can
+				// be tested by ear
 				if (!speech_pressed && ui().options().ui_speech())
 					speech::speak(_("Pressed"), true);
 				speech_pressed = true;
