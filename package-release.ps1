@@ -25,7 +25,7 @@ if (Test-Path "$root\nvdaControllerClient.dll") {
 # support folders shipped with official MAME releases (plus cheat and roms) -
 # deliberately NOT ini, cfg, nvram or sta, so personal configuration and play
 # state never ship in a package
-foreach ($dir in @("artwork", "bgfx", "cheat", "ctrlr", "hash", "hlsl", "language", "plugins", "roms", "samples")) {
+foreach ($dir in @("artwork", "bgfx", "cheat", "ctrlr", "folders", "hash", "hlsl", "language", "plugins", "roms", "samples")) {
     if (Test-Path "$root\$dir") {
         Copy-Item "$root\$dir" $stage -Recurse
     }
