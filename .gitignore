@@ -38,6 +38,7 @@
 !/.travis.yml
 !/makefile
 !/mame.doxygen
+!/package-release.ps1
 !/*.md
 !/*.bdf
 !/LICENSE
