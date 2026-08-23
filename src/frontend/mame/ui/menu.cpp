@@ -1996,12 +1996,13 @@ void menu::announce_selection()
 	bool const heading_changed = menu_changed || (m_global_state.speech_heading() != heading);
 	if (menu_changed || heading_changed || !prefix.empty() || (m_global_state.speech_text() != phrase))
 	{
-		std::string announcement = std::move(prefix);
+		std::string announcement;
 		if (heading_changed && !heading.empty())
 		{
 			announcement.append(heading);
 			announcement.append(". ");
 		}
+		announcement.append(prefix);
 		announcement.append(phrase);
 		m_global_state.set_speech_state(this, std::move(phrase), std::move(heading));
 		if (!announcement.empty())

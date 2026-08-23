@@ -273,6 +273,7 @@ menu_input::menu_input(mame_ui_manager &mui, render_target &target)
 	, lastitem(nullptr)
 	, record_next(false)
 	, speech_pressed(false)
+	, speech_hint_pending(true)
 	, speech_pressed_ref(nullptr)
 	, modified_ticks(0)
 {
@@ -452,6 +453,21 @@ std::string menu_input::speech_phrase()
 	{
 		phrase = errormsg;
 		phrase.append(". ");
+	}
+	else if (speech_hint_pending)
+	{
+		// read the how-to prompts once when the menu is first announced
+		speech_hint_pending = false;
+		auto const append_prompt =
+				[] (std::string &dest, std::string const &prompt)
+				{
+					dest.append(prompt, 0, prompt.find('\n'));
+					dest.append(". ");
+				};
+		std::string hint;
+		append_prompt(hint, assignprompt);
+		append_prompt(hint, clearprompt);
+		set_speech_prefix(std::move(hint));
 	}
 	phrase.append(menu::speech_phrase());
 	return phrase;

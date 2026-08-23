@@ -75,6 +75,7 @@ private:
 	input_item_data *lastitem;
 	bool record_next;
 	bool speech_pressed;
+	bool speech_hint_pending;
 	void const *speech_pressed_ref;
 	osd_ticks_t modified_ticks;
 	input_seq starting_seq;
