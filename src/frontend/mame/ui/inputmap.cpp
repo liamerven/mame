@@ -512,6 +512,10 @@ bool menu_input::handle(event const *ev)
 	}
 	else if (ev && ev->itemref)
 	{
+		// a UI action key (e.g. right toggling append mode) may itself be
+		// part of the row's assignment - don't let it announce Pressed
+		speech_pressed = true;
+
 		// otherwise, handle the events
 		input_item_data &item = *reinterpret_cast<input_item_data *>(ev->itemref);
 		input_item_data *newsel = &item;
