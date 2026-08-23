@@ -49,6 +49,8 @@ protected:
 
 	virtual void populate_text(std::optional<text_layout> &layout, float &width, int &lines) override;
 
+	virtual std::string speech_phrase() override;
+
 private:
 	struct list_items
 	{
@@ -69,6 +71,7 @@ private:
 	bool const m_issoft;
 	int m_current_tab;
 	std::string m_list, m_short, m_long, m_parent;
+	std::string m_speech_content;
 	std::vector<list_items> m_items_list;
 
 	std::pair<float, float> m_tab_line;

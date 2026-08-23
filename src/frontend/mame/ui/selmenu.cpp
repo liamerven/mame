@@ -1052,6 +1052,10 @@ void menu_select_launch::rotate_focus(int dir)
 
 std::string menu_select_launch::speech_phrase()
 {
+	// an error message takes over the display until dismissed - read it out
+	if (m_ui_error)
+		return m_error_text;
+
 	switch (get_focus())
 	{
 	case focused_menu::LEFT:

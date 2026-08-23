@@ -434,7 +434,22 @@ void menu_dats_view::populate_text(std::optional<text_layout> &layout, float &wi
 		layout.emplace(create_layout(width));
 		add_info_text(*layout, buffer, ui().colors().text_color());
 		lines = std::numeric_limits<int>::max();
+		m_speech_content = std::move(buffer);
 	}
+}
+
+std::string menu_dats_view::speech_phrase()
+{
+	std::string phrase;
+	if (!m_items_list.empty())
+		phrase = m_items_list[m_current_tab].label;
+	if (!m_speech_content.empty())
+	{
+		if (!phrase.empty())
+			phrase.append(". ");
+		phrase.append(m_speech_content);
+	}
+	return phrase;
 }
 
 } // namespace ui

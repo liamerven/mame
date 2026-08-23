@@ -88,6 +88,8 @@ protected:
 
 	virtual void populate_text(std::optional<text_layout> &layout, float &width, int &lines) override;
 
+	virtual std::string speech_phrase() override;
+
 private:
 	virtual void populate() override;
 

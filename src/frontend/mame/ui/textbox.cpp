@@ -503,6 +503,19 @@ void menu_fixed_textbox::custom_render(uint32_t flags, void *selectedref, float 
 }
 
 
+std::string menu_fixed_textbox::speech_phrase()
+{
+	std::string phrase(m_heading);
+	if (!m_content.empty())
+	{
+		if (!phrase.empty())
+			phrase.append(". ");
+		phrase.append(m_content);
+	}
+	return phrase;
+}
+
+
 void menu_fixed_textbox::populate_text(
 		std::optional<text_layout> &layout,
 		float &width,
