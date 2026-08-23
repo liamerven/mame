@@ -518,6 +518,7 @@ menu_select_launch::menu_select_launch(mame_ui_manager &mui, render_target &targ
 	, m_info_view(-1)
 	, m_items_list()
 	, m_info_buffer()
+	, m_speech_search()
 	, m_info_layout()
 	, m_icon_width(0)
 	, m_icon_height(0)
@@ -1087,13 +1088,24 @@ std::string menu_select_launch::speech_phrase()
 	case focused_menu::MAIN:
 	default:
 		{
+			// only read the search text back while it's being edited, so it
+			// doesn't clutter every announcement when moving through results
 			std::string phrase;
-			if (!m_search.empty())
+			if (m_search != m_speech_search)
 			{
-				phrase.append(_("Search"));
-				phrase.append(": ");
-				phrase.append(m_search);
-				phrase.append(". ");
+				if (!m_search.empty())
+				{
+					phrase.append(_("Search"));
+					phrase.append(": ");
+					phrase.append(m_search);
+					phrase.append(". ");
+				}
+				else
+				{
+					phrase.append(_("Search cleared"));
+					phrase.append(". ");
+				}
+				m_speech_search = m_search;
 			}
 			phrase.append(menu::speech_phrase());
 			return phrase;

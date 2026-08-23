@@ -424,6 +424,7 @@ private:
 	int                         m_info_view;
 	std::vector<std::string>    m_items_list;
 	std::string                 m_info_buffer;
+	std::string                 m_speech_search;
 	std::optional<text_layout>  m_info_layout;
 
 	int                         m_icon_width;
