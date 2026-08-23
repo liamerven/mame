@@ -369,6 +369,10 @@ protected:
 	virtual void menu_deactivated();
 	virtual void menu_dismissed();
 
+	// composes the text spoken for the current selection - overridable for
+	// menus with multiple focus areas or additional state worth announcing
+	virtual std::string speech_phrase();
+
 	static bool is_selectable(menu_item const &item)
 	{
 		return (!(item.flags() & menu::FLAG_DISABLE) && (item.type() != menu_item_type::SEPARATOR));

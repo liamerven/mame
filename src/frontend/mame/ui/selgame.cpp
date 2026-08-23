@@ -1047,6 +1047,14 @@ std::string menu_select_game::make_software_description(ui_software_info const &
 }
 
 
+std::string menu_select_game::filter_speech_name(int filter) const
+{
+	if ((machine_filter::FIRST <= filter) && (machine_filter::LAST >= filter))
+		return machine_filter::display_name(machine_filter::type(filter));
+	return std::string();
+}
+
+
 void menu_select_game::filter_selected(int index)
 {
 	assert((machine_filter::FIRST <= index) && (machine_filter::LAST >= index));

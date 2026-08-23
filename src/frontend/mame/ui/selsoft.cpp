@@ -741,6 +741,14 @@ std::string menu_select_software::make_software_description(ui_software_info con
 }
 
 
+std::string menu_select_software::filter_speech_name(int filter) const
+{
+	if ((software_filter::FIRST <= filter) && (software_filter::LAST >= filter))
+		return software_filter::display_name(software_filter::type(filter));
+	return std::string();
+}
+
+
 void menu_select_software::filter_selected(int index)
 {
 	assert((software_filter::FIRST <= index) && (software_filter::LAST >= index));

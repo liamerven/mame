@@ -143,6 +143,10 @@ protected:
 	virtual void menu_activated() override;
 	virtual void menu_deactivated() override;
 
+	// speech announcements are aware of the focused panel
+	virtual std::string speech_phrase() override;
+	virtual std::string filter_speech_name(int filter) const { return std::string(); }
+
 	// handlers
 	virtual void inkey_export() = 0;
 	void inkey_dats();

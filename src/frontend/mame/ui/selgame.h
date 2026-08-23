@@ -76,6 +76,7 @@ private:
 
 	// filter navigation
 	virtual void filter_selected(int index) override;
+	virtual std::string filter_speech_name(int filter) const override;
 
 	// toolbar
 	virtual void inkey_export() override;

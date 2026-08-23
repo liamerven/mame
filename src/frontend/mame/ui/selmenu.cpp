@@ -1045,6 +1045,59 @@ void menu_select_launch::rotate_focus(int dir)
 }
 
 
+//-------------------------------------------------
+//  speech_phrase - announce the focused panel,
+//  not just the main item list
+//-------------------------------------------------
+
+std::string menu_select_launch::speech_phrase()
+{
+	switch (get_focus())
+	{
+	case focused_menu::LEFT:
+		{
+			std::string phrase(_("Filters"));
+			std::string const name(filter_speech_name(m_filter_highlight));
+			if (!name.empty())
+			{
+				phrase.append(": ");
+				phrase.append(name);
+			}
+			return phrase;
+		}
+
+	case focused_menu::RIGHTTOP:
+		return _("Image gallery panel");
+
+	case focused_menu::RIGHTBOTTOM:
+		{
+			std::string phrase(_("Information panel"));
+			if (!m_info_buffer.empty())
+			{
+				phrase.append(". ");
+				phrase.append(m_info_buffer);
+			}
+			return phrase;
+		}
+
+	case focused_menu::MAIN:
+	default:
+		{
+			std::string phrase;
+			if (!m_search.empty())
+			{
+				phrase.append(_("Search"));
+				phrase.append(": ");
+				phrase.append(m_search);
+				phrase.append(". ");
+			}
+			phrase.append(menu::speech_phrase());
+			return phrase;
+		}
+	}
+}
+
+
 void menu_select_launch::inkey_dats()
 {
 	ui_software_info const *software;

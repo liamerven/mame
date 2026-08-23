@@ -1947,17 +1947,12 @@ void menu::activate_menu(render_target &target)
 
 
 //-------------------------------------------------
-//  announce_selection - speak the menu heading
-//  and/or selected item via the screen reader or
-//  text-to-speech when they change
+//  speech_phrase - compose the text spoken for
+//  the current selection
 //-------------------------------------------------
 
-void menu::announce_selection()
+std::string menu::speech_phrase()
 {
-	if (!speech::available() || !ui().options().ui_speech())
-		return;
-
-	// compose what the current selection should sound like
 	std::string phrase;
 	if (selection_valid() && !m_items.empty())
 	{
@@ -1972,6 +1967,23 @@ void menu::announce_selection()
 			}
 		}
 	}
+	return phrase;
+}
+
+
+//-------------------------------------------------
+//  announce_selection - speak the menu heading
+//  and/or selected item via the screen reader or
+//  text-to-speech when they change
+//-------------------------------------------------
+
+void menu::announce_selection()
+{
+	if (!speech::available() || !ui().options().ui_speech())
+		return;
+
+	// compose what the current selection should sound like
+	std::string phrase = speech_phrase();
 
 	// only speak when the menu or the selection actually changed
 	bool const menu_changed = m_global_state.speech_menu() != this;
