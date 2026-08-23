@@ -22,10 +22,17 @@ if (Test-Path "$root\nvdaControllerClient.dll") {
     Copy-Item "$root\nvdaControllerClient.dll" $stage
 }
 
-# support folders shipped with official MAME releases
-foreach ($dir in @("artwork", "bgfx", "ctrlr", "hash", "hlsl", "ini", "language", "plugins", "samples", "roms")) {
+# support folders shipped with official MAME releases (plus cheat, a common add-on)
+foreach ($dir in @("artwork", "bgfx", "cheat", "ctrlr", "hash", "hlsl", "ini", "language", "plugins", "samples", "roms")) {
     if (Test-Path "$root\$dir") {
         Copy-Item "$root\$dir" $stage -Recurse
+    }
+}
+
+# cheat collection archive (e.g. Pugsy's cheats), if present
+foreach ($cheatfile in @("cheat.7z", "cheats.7z")) {
+    if (Test-Path "$root\$cheatfile") {
+        Copy-Item "$root\$cheatfile" $stage
     }
 }
 
