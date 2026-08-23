@@ -606,6 +606,10 @@ bool menu_input::handle(event const *ev)
 			else if (record_next || !item.seq.empty())
 			{
 				record_next = !record_next;
+
+				// announce the mode change - the only visual indication is the prompt below the menu
+				if (ui().options().ui_speech())
+					speech::speak(record_next ? _("Enter will append an alternative to the assignment") : _("Enter will replace the assignment"), true);
 			}
 			redraw = true;
 		}
