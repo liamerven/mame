@@ -23,6 +23,7 @@
 #include "ui/sliders.h"
 #include "ui/state.h"
 #include "ui/systemlist.h"
+#include "ui/uispeech.h"
 #include "ui/viewgfx.h"
 
 #include "imagedev/cassette.h"
@@ -851,6 +852,10 @@ void mame_ui_manager::display_startup_screens(bool first_time)
 			}
 			break;
 		}
+
+		// read the message aloud for accessibility
+		if (!warning_text.empty() && (m_handler_callback_type == ui_callback_type::MODAL) && options().ui_speech())
+			ui::speech::speak(warning_text, true);
 
 		// clear the input memory and wait for all keys to be released
 		poller.reset();
@@ -2688,6 +2693,13 @@ void mame_ui_manager::popup_time_string(int seconds, std::string message)
 {
 	// extract the text
 	messagebox_poptext = message;
+
+	// read new popup messages aloud for accessibility - don't repeat when
+	// an identical message is refreshed while it's still on screen
+	bool const previous_active = osd_ticks() < m_popup_text_end;
+	if (options().ui_speech() && (!previous_active || (messagebox_poptext != m_popup_speech_text)))
+		ui::speech::speak(messagebox_poptext, previous_active);
+	m_popup_speech_text = messagebox_poptext;
 
 	// set a timer
 	m_popup_text_end = osd_ticks() + osd_ticks_per_second() * seconds;

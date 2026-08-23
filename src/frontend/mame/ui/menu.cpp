@@ -12,6 +12,7 @@
 #include "ui/menu.h"
 
 #include "ui/ui.h"
+#include "ui/uispeech.h"
 
 #include "cheat.h"
 #include "mame.h"
@@ -75,6 +76,7 @@ menu::global_state::global_state(mame_ui_manager &ui)
 	, m_stack()
 	, m_free()
 	, m_hide(false)
+	, m_speech_menu(nullptr)
 	, m_target(nullptr)
 	, m_current_pointer(-1)
 	, m_pointer_type(ui_event::pointer::UNKNOWN)
@@ -127,6 +129,7 @@ void menu::global_state::stack_push(std::unique_ptr<menu> &&menu)
 	}
 	menu->m_parent = std::move(m_stack);
 	m_stack = std::move(menu);
+	reset_speech_state();
 
 	ui_event uievt;
 	while (m_stack->machine().ui_input().pop_event(&uievt))
@@ -162,6 +165,7 @@ void menu::global_state::stack_pop()
 		m_stack = std::move(menu->m_parent);
 		menu->m_parent = std::move(m_free);
 		m_free = std::move(menu);
+		reset_speech_state();
 
 		ui_event uievt;
 		while (m_free->machine().ui_input().pop_event(&uievt))
@@ -1943,6 +1947,51 @@ void menu::activate_menu(render_target &target)
 
 
 //-------------------------------------------------
+//  announce_selection - speak the menu heading
+//  and/or selected item via the screen reader or
+//  text-to-speech when they change
+//-------------------------------------------------
+
+void menu::announce_selection()
+{
+	if (!speech::available() || !ui().options().ui_speech())
+		return;
+
+	// compose what the current selection should sound like
+	std::string phrase;
+	if (selection_valid() && !m_items.empty())
+	{
+		menu_item const &item = m_items[m_selected];
+		if ((item.type() != menu_item_type::SEPARATOR) && (item.text() != MENU_SEPARATOR_ITEM))
+		{
+			phrase = item.text();
+			if (!item.subtext().empty())
+			{
+				phrase.append(": ");
+				phrase.append(item.subtext());
+			}
+		}
+	}
+
+	// only speak when the menu or the selection actually changed
+	bool const menu_changed = m_global_state.speech_menu() != this;
+	if (menu_changed || (m_global_state.speech_text() != phrase))
+	{
+		std::string announcement;
+		if (menu_changed && m_heading && !m_heading->empty())
+		{
+			announcement = *m_heading;
+			announcement.append(". ");
+		}
+		announcement.append(phrase);
+		m_global_state.set_speech_state(this, std::move(phrase));
+		if (!announcement.empty())
+			speech::speak(announcement, true);
+	}
+}
+
+
+//-------------------------------------------------
 //  check_metrics - recompute metrics if target
 //  geometry has changed
 //-------------------------------------------------
@@ -2098,8 +2147,10 @@ bool menu::do_handle()
 	if (do_rebuild())
 	{
 		validate_selection(1);
+		announce_selection();
 		return true;
 	}
+	announce_selection();
 	return need_update;
 }
 

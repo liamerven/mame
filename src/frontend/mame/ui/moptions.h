@@ -43,6 +43,7 @@
 #define OPTION_UNTHROTTLE_MUTE        "unthrottle_mute"
 #define OPTION_MENU_PAUSE             "menu_pause"
 #define OPTION_UI_FOLLOW_FOCUS        "ui_follow_focus"
+#define OPTION_UI_SPEECH              "ui_speech"
 
 // core UI options
 #define OPTION_INFOS_SIZE             "infos_text_size"
@@ -118,6 +119,7 @@ public:
 	bool unthrottle_mute() const { return bool_value(OPTION_UNTHROTTLE_MUTE); }
 	bool menu_pause() const { return bool_value(OPTION_MENU_PAUSE); }
 	bool ui_follow_focus() const { return bool_value(OPTION_UI_FOLLOW_FOCUS); }
+	bool ui_speech() const { return bool_value(OPTION_UI_SPEECH); }
 
 	// UI options
 	float infos_size() const { return float_value(OPTION_INFOS_SIZE); }

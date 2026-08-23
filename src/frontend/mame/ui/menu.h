@@ -442,7 +442,13 @@ private:
 		void clear_free_list();
 		bool stack_has_special_main_menu() const;
 
-		void hide_menu() { m_hide = true; }
+		void hide_menu() { m_hide = true; reset_speech_state(); }
+
+		// tracking for spoken menu announcements
+		void const *speech_menu() const { return m_speech_menu; }
+		std::string const &speech_text() const { return m_speech_text; }
+		void set_speech_state(void const *menu, std::string &&text) { m_speech_menu = menu; m_speech_text = std::move(text); }
+		void reset_speech_state() { m_speech_menu = nullptr; m_speech_text.clear(); }
 
 		void set_target(render_target &target)
 		{
@@ -480,6 +486,9 @@ private:
 		std::unique_ptr<menu>           m_free;
 
 		bool                            m_hide;
+
+		void const                      *m_speech_menu;         // menu most recently announced via speech
+		std::string                     m_speech_text;          // most recent spoken selection text
 
 		render_target                   *m_target;
 		s32                             m_current_pointer;      // current active pointer ID or -1 if none
@@ -521,6 +530,7 @@ private:
 	void extra_text_draw_box(float origx1, float origx2, float origy, float yspan, std::string_view text, int direction);
 
 	void activate_menu(render_target &target);
+	void announce_selection();
 	bool check_metrics();
 	bool do_rebuild();
 	bool first_item_visible() const { return top_line <= 0; }

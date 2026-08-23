@@ -194,6 +194,8 @@ files {
 	MAME_DIR .. "src/frontend/mame/ui/toolbar.ipp",
 	MAME_DIR .. "src/frontend/mame/ui/ui.cpp",
 	MAME_DIR .. "src/frontend/mame/ui/ui.h",
+	MAME_DIR .. "src/frontend/mame/ui/uispeech.cpp",
+	MAME_DIR .. "src/frontend/mame/ui/uispeech.h",
 	MAME_DIR .. "src/frontend/mame/ui/utils.cpp",
 	MAME_DIR .. "src/frontend/mame/ui/utils.h",
 	MAME_DIR .. "src/frontend/mame/ui/videoopt.cpp",

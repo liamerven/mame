@@ -89,6 +89,7 @@ menu_main::menu_main(mame_ui_manager &mui, render_target &target)
 	, m_phase(machine_phase::PREINIT)
 {
 	set_needs_prev_menu_item(false);
+	set_heading(_("Main Menu"));
 }
 
 menu_main::~menu_main()

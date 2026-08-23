@@ -36,6 +36,7 @@ std::vector<submenu::option> submenu::misc_options()
 			{ option_type::UI,   N_("Automatically pause when showing menus"),                   OPTION_MENU_PAUSE },
 			{ option_type::UI,   N_("Open menus in the active window"),                          OPTION_UI_FOLLOW_FOCUS },
 			{ option_type::UI,   N_("Skip imperfect emulation warnings"),                        OPTION_SKIP_WARNINGS },
+			{ option_type::UI,   N_("Speak menu selections and messages aloud"),                OPTION_UI_SPEECH },
 			{ option_type::UI,   N_("Re-select last system launched"),                           OPTION_REMEMBER_LAST },
 			{ option_type::UI,   N_("Enlarge images in the right panel"),                        OPTION_ENLARGE_SNAPS },
 			{ option_type::EMU,  N_("Cheats"),                                                   OPTION_CHEAT },
