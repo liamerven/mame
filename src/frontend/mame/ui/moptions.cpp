@@ -50,6 +50,7 @@ const options_entry ui_options::s_option_entries[] =
 	{ OPTION_MENU_PAUSE,                    "0",                option_type::BOOLEAN,    "automatically pause when showing menus" },
 	{ OPTION_UI_FOLLOW_FOCUS,               "0",                option_type::BOOLEAN,    "open menus in active window" },
 	{ OPTION_UI_SPEECH,                     "1",                option_type::BOOLEAN,    "speak menu selections and messages aloud via screen reader or text-to-speech" },
+	{ OPTION_UI_SPEECH_LOG,                 "",                 option_type::PATH,       "append spoken UI announcements to this file for debugging" },
 
 	// UI options
 	{ nullptr,                              nullptr,            option_type::HEADER,     "UI OPTIONS" },

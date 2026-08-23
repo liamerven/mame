@@ -44,6 +44,7 @@
 #define OPTION_MENU_PAUSE             "menu_pause"
 #define OPTION_UI_FOLLOW_FOCUS        "ui_follow_focus"
 #define OPTION_UI_SPEECH              "ui_speech"
+#define OPTION_UI_SPEECH_LOG          "ui_speech_log"
 
 // core UI options
 #define OPTION_INFOS_SIZE             "infos_text_size"
@@ -120,6 +121,7 @@ public:
 	bool menu_pause() const { return bool_value(OPTION_MENU_PAUSE); }
 	bool ui_follow_focus() const { return bool_value(OPTION_UI_FOLLOW_FOCUS); }
 	bool ui_speech() const { return bool_value(OPTION_UI_SPEECH); }
+	const char *ui_speech_log() const { return value(OPTION_UI_SPEECH_LOG); }
 
 	// UI options
 	float infos_size() const { return float_value(OPTION_INFOS_SIZE); }

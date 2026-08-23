@@ -314,6 +314,9 @@ void mame_ui_manager::init()
 {
 	load_ui_options();
 
+	// enable the speech debug log if configured
+	ui::speech::set_log_file(options().ui_speech_log());
+
 	// start loading system names as early as possible
 	ui::system_list::instance().cache_data(options());
 

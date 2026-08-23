@@ -25,6 +25,9 @@ void speak(std::string_view text, bool interrupt = true);
 // silence any speech in progress and discard queued announcements
 void stop();
 
+// append each spoken announcement to this file for debugging (empty to disable)
+void set_log_file(std::string_view path);
+
 } // namespace ui::speech
 
 #endif // MAME_FRONTEND_UI_UISPEECH_H

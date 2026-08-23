@@ -39,6 +39,7 @@
 
 #include <condition_variable>
 #include <deque>
+#include <fstream>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -47,6 +48,20 @@
 namespace ui::speech {
 
 namespace {
+
+// optional debug log of everything sent to the speech engine
+std::mutex f_log_mutex;
+std::string f_log_path;
+
+void log_utterance(std::string_view text, bool interrupt)
+{
+	std::lock_guard<std::mutex> guard(f_log_mutex);
+	if (f_log_path.empty())
+		return;
+	std::ofstream stream(f_log_path, std::ios::app);
+	if (stream)
+		stream << GetTickCount64() << (interrupt ? " [interrupt] " : " [queue]     ") << text << '\n';
+}
 
 // CLSID_SpVoice and IID_ISpVoice, defined locally so no extra import
 // library is needed on any toolchain
@@ -227,6 +242,7 @@ bool available()
 
 void speak(std::string_view text, bool interrupt)
 {
+	log_utterance(text, interrupt);
 	std::wstring speakable = make_speakable(text);
 	if (speakable.empty() && !interrupt)
 		return;
@@ -235,7 +251,14 @@ void speak(std::string_view text, bool interrupt)
 
 void stop()
 {
+	log_utterance("<stop>", true);
 	engine().post(std::wstring(), true);
+}
+
+void set_log_file(std::string_view path)
+{
+	std::lock_guard<std::mutex> guard(f_log_mutex);
+	f_log_path = path;
 }
 
 } // namespace ui::speech
@@ -254,6 +277,10 @@ void speak(std::string_view text, bool interrupt)
 }
 
 void stop()
+{
+}
+
+void set_log_file(std::string_view path)
 {
 }
 
