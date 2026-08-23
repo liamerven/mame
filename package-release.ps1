@@ -34,6 +34,15 @@ foreach ($dir in @("artwork", "bgfx", "cheat", "ctrlr", "hash", "hlsl", "languag
 # make sure a roms folder exists in the package even if the source has none
 New-Item -ItemType Directory -Force "$stage\roms" | Out-Null
 
+# minimal config enabling the cheat engine out of the box; everything else
+# stays at MAME defaults
+@"
+#
+# CORE MISC OPTIONS
+#
+cheat                     1
+"@ | Out-File -Encoding ascii "$stage\mame.ini"
+
 # cheat collection archive (e.g. Pugsy's cheats), if present - MAME looks
 # for it inside the cheat folder (the default cheatpath), not the root
 foreach ($cheatfile in @("cheat.7z", "cheats.7z", "cheat\cheat.7z", "cheat\cheats.7z")) {
