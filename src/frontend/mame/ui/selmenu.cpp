@@ -520,6 +520,7 @@ menu_select_launch::menu_select_launch(mame_ui_manager &mui, render_target &targ
 	, m_items_list()
 	, m_info_buffer()
 	, m_speech_search()
+	, m_speech_focus(focused_menu::MAIN)
 	, m_info_layout()
 	, m_icon_width(0)
 	, m_icon_height(0)
@@ -1058,33 +1059,42 @@ std::string menu_select_launch::speech_phrase()
 	if (m_ui_error)
 		return m_error_text;
 
-	// acknowledge a just-applied filter with the resulting item count
+	focused_menu const focus = get_focus();
+	bool const focus_changed = focus != m_speech_focus;
+	m_speech_focus = focus;
+
+	// one-shot announcements go in the prefix so they don't repeat as the
+	// selection moves
+	std::string prefix;
+
+	// acknowledge a just-applied filter
 	if (m_filter_announce_pending)
 	{
 		m_filter_announce_pending = false;
-		set_speech_prefix(string_format(_("Filter applied, %1$d items shown. "), m_available_items));
+		prefix.append(_("Filter applied"));
+		prefix.append(". ");
 	}
 
-	switch (get_focus())
+	std::string phrase;
+	switch (focus)
 	{
 	case focused_menu::LEFT:
+		// announce the panel on entry, after that just the filter names
+		if (focus_changed)
 		{
-			std::string phrase(_("Filters"));
-			std::string const name(filter_speech_name(m_filter_highlight));
-			if (!name.empty())
-			{
-				phrase.append(": ");
-				phrase.append(name);
-			}
-			return phrase;
+			prefix.append(_("Filters"));
+			prefix.append(". ");
 		}
+		phrase = filter_speech_name(m_filter_highlight);
+		break;
 
 	case focused_menu::RIGHTTOP:
-		return _("Image gallery panel");
+		phrase = _("Image gallery panel");
+		break;
 
 	case focused_menu::RIGHTBOTTOM:
 		{
-			std::string phrase(_("Information panel"));
+			phrase = _("Information panel");
 			std::string_view first;
 			int total;
 			if (update_info_buffer(first, total))
@@ -1097,35 +1107,36 @@ std::string menu_select_launch::speech_phrase()
 					phrase.append(m_info_buffer);
 				}
 			}
-			return phrase;
 		}
+		break;
 
 	case focused_menu::MAIN:
 	default:
+		// only read the search text back while it's being edited, so it
+		// doesn't clutter every announcement when moving through results
+		if (m_search != m_speech_search)
 		{
-			// only read the search text back while it's being edited, so it
-			// doesn't clutter every announcement when moving through results
-			std::string phrase;
-			if (m_search != m_speech_search)
+			if (!m_search.empty())
 			{
-				if (!m_search.empty())
-				{
-					phrase.append(_("Search"));
-					phrase.append(": ");
-					phrase.append(m_search);
-					phrase.append(". ");
-				}
-				else
-				{
-					phrase.append(_("Search cleared"));
-					phrase.append(". ");
-				}
-				m_speech_search = m_search;
+				prefix.append(_("Search"));
+				prefix.append(": ");
+				prefix.append(m_search);
+				prefix.append(". ");
 			}
-			phrase.append(menu::speech_phrase());
-			return phrase;
+			else
+			{
+				prefix.append(_("Search cleared"));
+				prefix.append(". ");
+			}
+			m_speech_search = m_search;
 		}
+		phrase = menu::speech_phrase();
+		break;
 	}
+
+	if (!prefix.empty())
+		set_speech_prefix(std::move(prefix));
+	return phrase;
 }
 
 
