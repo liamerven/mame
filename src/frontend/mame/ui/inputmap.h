@@ -77,6 +77,7 @@ private:
 	bool speech_pressed;
 	bool speech_hint_pending;
 	void const *speech_pressed_ref;
+	void const *speech_polling_ref;
 	osd_ticks_t modified_ticks;
 	input_seq starting_seq;
 

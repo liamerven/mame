@@ -275,6 +275,7 @@ menu_input::menu_input(mame_ui_manager &mui, render_target &target)
 	, speech_pressed(false)
 	, speech_hint_pending(true)
 	, speech_pressed_ref(nullptr)
+	, speech_polling_ref(nullptr)
 	, modified_ticks(0)
 {
 	set_process_flags(PROCESS_LR_ALWAYS);
@@ -431,22 +432,25 @@ std::string menu_input::speech_phrase()
 {
 	if (pollingitem && seq_poll)
 	{
-		// warn that the next input pressed will be captured, and read back
-		// the sequence entered so far
-		std::string const seqname = machine().input().seq_name(seq_poll->sequence());
-		std::string phrase;
-		if (!seqname.empty())
+		// warn once when capture begins that the next input pressed will be
+		// captured; after that only read back the sequence as it's entered
+		if (speech_polling_ref != pollingitem)
 		{
-			phrase = seqname;
-			phrase.append(". ");
+			speech_polling_ref = pollingitem;
+			std::string warning(string_format(
+					record_next
+						? _("Appending to %1$s. The next input you press will be added to the assignment. Press Escape to cancel.")
+						: _("Assigning %1$s. The next input you press will become the assignment. Press Escape to cancel."),
+					pollingitem->name));
+			warning.append(" ");
+			set_speech_prefix(std::move(warning));
 		}
-		phrase.append(string_format(
-				record_next
-					? _("Appending to %1$s. The next input you press will be added to the assignment. Press Escape to cancel.")
-					: _("Assigning %1$s. The next input you press will become the assignment. Press Escape to cancel."),
-				pollingitem->name));
-		return phrase;
+		if (!seq_poll->sequence().empty())
+			return machine().input().seq_name(seq_poll->sequence());
+		else
+			return std::string();
 	}
+	speech_polling_ref = nullptr;
 
 	std::string phrase;
 	if (erroritem)
