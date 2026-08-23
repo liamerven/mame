@@ -13,6 +13,7 @@
 
 #include "uiinput.h"
 #include "ui/ui.h"
+#include "ui/uispeech.h"
 
 #include "input.h"
 
@@ -271,6 +272,7 @@ menu_input::menu_input(mame_ui_manager &mui, render_target &target)
 	, erroritem(nullptr)
 	, lastitem(nullptr)
 	, record_next(false)
+	, speech_pressed(false)
 	, modified_ticks(0)
 {
 	set_process_flags(PROCESS_LR_ALWAYS);
@@ -352,6 +354,7 @@ void menu_input::custom_render(uint32_t flags, void *selectedref, float top, flo
 {
 	if (pollingitem)
 	{
+		speech_pressed = false;
 		const std::string seqname = machine().input().seq_name(seq_poll->sequence());
 		char const *const text[] = { seqname.c_str() };
 		draw_text_box(
@@ -382,6 +385,11 @@ void menu_input::custom_render(uint32_t flags, void *selectedref, float top, flo
 			const input_item_data &item = *reinterpret_cast<input_item_data *>(selectedref);
 			if ((INPUT_TYPE_ANALOG != item.type) && machine().input().seq_pressed(item.seq))
 			{
+				// speak the indicator once per press so assignments can be tested by ear
+				if (!speech_pressed && ui().options().ui_speech())
+					speech::speak(_("Pressed"), true);
+				speech_pressed = true;
+
 				char const *const text[] = { _("Pressed") };
 				draw_text_box(
 						std::begin(text), std::end(text),
@@ -391,6 +399,7 @@ void menu_input::custom_render(uint32_t flags, void *selectedref, float top, flo
 			}
 			else
 			{
+				speech_pressed = false;
 				char const *const text[] = {
 					record_next ? appendprompt.c_str() : assignprompt.c_str(),
 					(!item.seq.empty() || item.defseq->empty()) ? clearprompt.c_str() : defaultprompt.c_str() };
@@ -403,6 +412,38 @@ void menu_input::custom_render(uint32_t flags, void *selectedref, float top, flo
 		}
 	}
 }
+
+std::string menu_input::speech_phrase()
+{
+	if (pollingitem && seq_poll)
+	{
+		// warn that the next input pressed will be captured, and read back
+		// the sequence entered so far
+		std::string const seqname = machine().input().seq_name(seq_poll->sequence());
+		std::string phrase;
+		if (!seqname.empty())
+		{
+			phrase = seqname;
+			phrase.append(". ");
+		}
+		phrase.append(string_format(
+				record_next
+					? _("Appending to %1$s. The next input you press will be added to the assignment. Press Escape to cancel.")
+					: _("Assigning %1$s. The next input you press will become the assignment. Press Escape to cancel."),
+				pollingitem->name));
+		return phrase;
+	}
+
+	std::string phrase;
+	if (erroritem)
+	{
+		phrase = errormsg;
+		phrase.append(". ");
+	}
+	phrase.append(menu::speech_phrase());
+	return phrase;
+}
+
 
 bool menu_input::handle(event const *ev)
 {

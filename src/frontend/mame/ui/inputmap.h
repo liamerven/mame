@@ -74,10 +74,12 @@ private:
 	input_item_data *erroritem;
 	input_item_data *lastitem;
 	bool record_next;
+	bool speech_pressed;
 	osd_ticks_t modified_ticks;
 	input_seq starting_seq;
 
 	virtual bool handle(event const *ev) override;
+	virtual std::string speech_phrase() override;
 
 	void update_assignment(input_item_data &item, std::nullptr_t);
 	void update_assignment(input_item_data &item, input_type_entry const *type_entry);
